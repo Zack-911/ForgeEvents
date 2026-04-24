@@ -1,5 +1,5 @@
 {
-  "name": "@tryforge/forge.events",
+  "name": "forgeevents",
   "version": "1.0.0",
   "description": "Custom user defined events for ForgeScript.",
   "main": "dist/index.js",
@@ -11,7 +11,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "ts-node src/__tests__/index.ts"
   },
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "devDependencies": {
     "@tryforge/forgescript": "github:tryforge/forgescript#dev",
     "@types/node": "^20.0.0",

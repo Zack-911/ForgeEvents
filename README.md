@@ -5,14 +5,14 @@ Custom user-defined events for ForgeScript. Define, fire, and listen to your own
 ## Install
 
 ```bash
-npm install @tryforge/forge.events
+npm install github:zack-911/forgeevents
 ```
 
 ## Usage
 
 ```ts
 import { ForgeClient } from '@tryforge/forgescript'
-import { ForgeEvents } from '@tryforge/forge.events'
+import { ForgeEvents } from 'forgeevents'
 
 const events = new ForgeEvents({
     events: [
@@ -60,7 +60,3 @@ client.login()
 | `$eventExists[name]` | Check if an event is defined |
 | `$eventFields[name;sep?]` | List declared fields for an event |
 | `$eventList[sep?]` | List all defined event names |
-
-## License
-
-GPL-3.0-or-later
