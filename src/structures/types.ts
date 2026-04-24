@@ -3,16 +3,18 @@ import type { Guild, BaseChannel, GuildMember, User } from 'discord.js'
 // ─── Discord context ──────────────────────────────────────────────────────────
 
 export interface DiscordEventContext {
-    guild: Guild | null
-    channel: BaseChannel | null
-    member: GuildMember | null
-    user: User | null
+    /**
+     * The raw Discord.js object set as ctx.obj in Interpreter.run.
+     * Context property getters (guild, channel, user, message, member) derive
+     * from this object, so passing the original Message/Interaction here makes
+     * every ForgeScript context function work correctly in event handlers.
+     */
+    obj: object
 }
 
 // ─── Custom event definition ──────────────────────────────────────────────────
 
 export interface CustomEventDefinition {
-    /** The event name. Must be unique. Only letters, numbers, underscores. */
     name: string
     description?: string
     fields?: string[]

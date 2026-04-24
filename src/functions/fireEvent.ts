@@ -3,7 +3,10 @@ import { ForgeEvents } from '..'
 
 export default new NativeFunction({
     name: '$fireEvent',
-    description: 'Fires a custom event, running all commands registered for it.',
+    description:
+        'Fires a custom event, running all commands registered for it. ' +
+        'The Discord context is automatically forwarded from the calling command ' +
+        'so all ForgeScript context functions work in handlers.',
     version: '1.0.0',
     brackets: true,
     unwrap: true,
@@ -44,7 +47,7 @@ export default new NativeFunction({
         }
 
         try {
-            const ran = await ext.registry.fire(eventName, data)
+            const ran = await ext.registry.fire(eventName, data, ctx.obj)
             return this.success(String(ran))
         } catch (err) {
             return this.customError((err as Error).message)

@@ -1,5 +1,5 @@
 import { ForgeClient, Interpreter, Logger } from '@tryforge/forgescript'
-import { CustomEventDefinition, CustomEventPayload } from './types'
+import { CustomEventDefinition, CustomEventPayload, DiscordEventContext } from './types'
 import { ForgeEventsCommandManager } from './commandManager'
 
 export class EventRegistry {
@@ -41,9 +41,19 @@ export class EventRegistry {
         return this.definitions.has(name)
     }
 
+    /**
+     * Fire a custom event.
+     *
+     * @param eventName  - The event to fire.
+     * @param data       - Key-value payload accessible via $eventData[key].
+     * @param discordObj - A Discord.js object used as ctx.obj in every handler.
+     *                     Makes $guildID, $channelID, $authorID etc. work correctly.
+     * @returns The number of handler commands that ran.
+     */
     public async fire(
         eventName: string,
         data: Record<string, string> = {},
+        discordObj?: object | null,
     ): Promise<number> {
         const def = this.definitions.get(eventName)
         if (!def) {
@@ -64,16 +74,15 @@ export class EventRegistry {
             }
         }
 
+        const discordCtx: DiscordEventContext = {
+            obj: discordObj ?? {},
+        }
+
         const payload: CustomEventPayload = {
             eventName,
             data,
             firedAt: new Date().toISOString(),
-            discordCtx: {
-                guild: null,
-                channel: null,
-                member: null,
-                user: null,
-            },
+            discordCtx,
         }
 
         const commands = this.commandManager.get(eventName)
@@ -82,7 +91,7 @@ export class EventRegistry {
                 client: this.client,
                 command,
                 data: command.compiled.code,
-                obj: {} as any,
+                obj: discordCtx.obj as any,
                 extras: payload,
             })
         }
