@@ -29,14 +29,12 @@ export default new NativeFunction({
     output: ArgType.Number,
     async execute(ctx, [eventName, rawData]) {
         const ext = ctx.client.getExtension(ForgeEvents, true)
-
         if (!ext.registry.has(eventName)) {
             return this.customError(
                 `Unknown event "${eventName}". ` +
                 `Defined events: ${ext.registry.getAll().map((e: any) => e.name).join(', ')}`,
             )
         }
-
         const data: Record<string, string> = {}
         for (const pair of rawData.filter(Boolean)) {
             const colon = pair.indexOf(':')
@@ -45,7 +43,6 @@ export default new NativeFunction({
             }
             data[pair.slice(0, colon).trim()] = pair.slice(colon + 1)
         }
-
         try {
             const ran = await ext.registry.fire(eventName, data, ctx.obj)
             return this.success(String(ran))

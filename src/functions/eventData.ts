@@ -25,16 +25,12 @@ export default new NativeFunction({
     ],
     output: ArgType.String,
     execute(ctx, [key, fallback]) {
-        // extras lives on IRunnable — accessed via ctx.runtime.extras, not ctx.extras
-        // (Context has no .extras getter; see Context.ts)
         const payload = ctx.runtime.extras as CustomEventPayload | undefined
-
         if (!payload?.data) {
             return this.customError(
                 '$eventData can only be used inside a custom event handler command.',
             )
         }
-
         const value = payload.data[key]
         if (value === undefined) {
             return fallback !== null && fallback !== undefined

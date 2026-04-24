@@ -8,9 +8,7 @@ export default new NativeFunction({
     unwrap: false,
     output: ArgType.String,
     execute(ctx) {
-        // extras lives on ctx.runtime — there is no ctx.extras getter on Context
         const payload = ctx.runtime.extras as CustomEventPayload | undefined
-
         if (!payload?.firedAt) {
             return this.customError(
                 '$eventFiredAt can only be used inside a custom event handler command.',
