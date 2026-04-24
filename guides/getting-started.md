@@ -1,3 +1,8 @@
+---
+title: Introduction
+category: getting-started
+---
+
 # ForgeEvents
 
 Custom user-defined events for ForgeScript. Define, fire, and listen to your own events with full Discord context forwarding.

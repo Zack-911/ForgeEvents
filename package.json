@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "ts-node src/__tests__/index.ts"
+    "dev": "ts-node src/__tests__/index.ts",
+    "docgen": "pnpm build && node dist/docgen.js"
   },
   "license": "MIT",
   "devDependencies": {
