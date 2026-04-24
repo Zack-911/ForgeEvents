@@ -1,0 +1,23 @@
+{
+  "name": "@tryforge/forge.events",
+  "version": "1.0.0",
+  "description": "Custom user defined events for ForgeScript.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "ts-node src/__tests__/index.ts"
+  },
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@tryforge/forgescript": "github:tryforge/forgescript#dev",
+    "@types/node": "^20.0.0",
+    "discord.js": "^14.26.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "tiny-typed-emitter": "^2.1.0"
+  }
+}
