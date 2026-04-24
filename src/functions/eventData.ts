@@ -3,7 +3,7 @@ import { CustomEventPayload } from '../structures/types'
 
 export default new NativeFunction({
     name: '$eventData',
-    description: 'Returns a field value from the current custom event.',
+    description: 'Returns a field value from the data passed to the currently executing custom event. Only valid inside event handler commands.',
     version: '1.0.0',
     brackets: true,
     unwrap: true,
@@ -17,7 +17,7 @@ export default new NativeFunction({
         },
         {
             name: 'default',
-            description: 'Value to return if the key does not exist.',
+            description: 'Value to return if the key does not exist in the event data.',
             type: ArgType.String,
             required: false,
             rest: false,
@@ -25,11 +25,14 @@ export default new NativeFunction({
     ],
     output: ArgType.String,
     execute(ctx, [key, fallback]) {
-        // @ts-ignore
-        const payload = ctx.extras as CustomEventPayload | undefined
+        // extras lives on IRunnable — accessed via ctx.runtime.extras, not ctx.extras
+        // (Context has no .extras getter; see Context.ts)
+        const payload = ctx.runtime.extras as CustomEventPayload | undefined
 
         if (!payload?.data) {
-            return this.customError('$eventData can only be used inside a custom event handler command.')
+            return this.customError(
+                '$eventData can only be used inside a custom event handler command.',
+            )
         }
 
         const value = payload.data[key]
