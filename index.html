@@ -966,15 +966,28 @@
       let entries = CONFIG.guidesFiles.map(f => ({ path: f }));
 
       if (!entries.length && CONFIG.guidesIndexPath) {
-        const index = await loadLocalJson(CONFIG.guidesIndexPath, null);
-        if (Array.isArray(index)) {
-          const dir = CONFIG.guidesIndexPath.replace(/\/[^/]+$/, '/');
-          entries = index.map(item => {
-            const path = typeof item === 'string' ? item : (item.md || item.path || '');
-            if (!path) return null;
-            const fullPath = (path.startsWith('guides/') || path.startsWith('./') || path.startsWith('/')) ? path : dir + path;
-            return typeof item === 'string' ? { path: fullPath } : { ...item, path: fullPath };
-          }).filter(Boolean);
+        try {
+          const index = await loadLocalJson(CONFIG.guidesIndexPath, null);
+          if (Array.isArray(index)) {
+            const dir = CONFIG.guidesIndexPath.includes('/') 
+              ? CONFIG.guidesIndexPath.replace(/\/[^/]+$/, '/') 
+              : '';
+            entries = index.map(item => {
+              const path = typeof item === 'string' ? item : (item.md || item.path || '');
+              if (!path) return null;
+              
+              let fullPath = path;
+              if (!path.startsWith('guides/') && !path.startsWith('./') && !path.startsWith('/') && !path.startsWith('http')) {
+                fullPath = dir + path;
+              }
+              
+              return typeof item === 'string' ? { path: fullPath } : { ...item, path: fullPath };
+            }).filter(Boolean);
+          } else {
+            console.warn(`[Guides] Index at ${CONFIG.guidesIndexPath} is not an array or could not be loaded.`);
+          }
+        } catch (err) {
+          console.error(`[Guides] Failed to load index at ${CONFIG.guidesIndexPath}:`, err);
         }
       }
 
@@ -983,7 +996,10 @@
       for (const entry of entries) {
         try {
           const r = await fetch(entry.path);
-          if (!r.ok) continue;
+          if (!r.ok) {
+            console.warn(`[Guides] Failed to fetch guide at ${entry.path}: ${r.status} ${r.statusText}`);
+            continue;
+          }
           const raw = await r.text();
           const { fm, content } = parseFrontmatter(raw);
           const fileName = entry.path.replace(/^.*\//, '').replace(/\.md$/i, '');
@@ -1000,7 +1016,9 @@
             approvedAt: null,
             packageName: CONFIG.extensionName,
           });
-        } catch { /* skip */ }
+        } catch (err) {
+          console.error(`[Guides] Error processing guide at ${entry.path}:`, err);
+        }
       }
       return guides;
     }
